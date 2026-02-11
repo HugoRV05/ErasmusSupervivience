@@ -11,8 +11,19 @@ interface MascotProps {
 }
 
 export function Mascot({ className, size = 120, alt = "Erasmus Monkey", pose = "default" }: MascotProps) {
-  // Map poses to images (currently all same image until user provides more)
-  const src = "/mascot/mascot.webp";
+  // Map named poses to index-based poses for now
+  const poseMap: Record<string, string> = {
+    default: "pose_1",
+    happy: "pose_2",
+    thinking: "pose_3",
+    sad: "pose_4",
+    scholar: "pose_5",
+    explorer: "pose_6",
+    mechanic: "pose_7",
+  };
+
+  const poseFile = poseMap[pose] || (pose.startsWith("pose_") ? pose : "pose_1");
+  const src = `/mascot/${poseFile}.png`;
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
