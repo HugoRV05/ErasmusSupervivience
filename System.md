@@ -36,6 +36,7 @@ All state slices are persisted automatically to `localStorage` using keys prefix
 
 - `src/types/`: Centralized TypeScript interfaces for all data models.
 - `src/hooks/useLocalStorage.ts`: Generic hook for sync-to-disk state.
+- `src/components/ui/Mascot.tsx`: Reusable mascot component with size and pose props.
 - `src/components/layout/`: Shared layout shells (BottomNav, PageShell).
 - `src/lib/constants.ts`: Seed data used only on the very first launch.
 - `src/lib/utils.ts`: Shared logic for currency, dates, IDs, and stock levels.
