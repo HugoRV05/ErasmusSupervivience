@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +12,9 @@ interface MascotProps {
 }
 
 export function Mascot({ className, size = 120, alt = "Erasmus Monkey", pose = "default" }: MascotProps) {
-  // Map named poses to index-based poses for now
+  const [error, setError] = useState(false);
+  
+  // Map named poses to the 6 available poses
   const poseMap: Record<string, string> = {
     default: "pose_1",
     happy: "pose_2",
@@ -19,11 +22,11 @@ export function Mascot({ className, size = 120, alt = "Erasmus Monkey", pose = "
     sad: "pose_4",
     scholar: "pose_5",
     explorer: "pose_6",
-    mechanic: "pose_7",
+    mechanic: "pose_1", // Reuse pose_1 for mechanic since we have 6
   };
 
   const poseFile = poseMap[pose] || (pose.startsWith("pose_") ? pose : "pose_1");
-  const src = `/mascot/${poseFile}.png`;
+  const src = error ? "/mascot/mascot.webp" : `/mascot/${poseFile}.png`;
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
@@ -34,6 +37,7 @@ export function Mascot({ className, size = 120, alt = "Erasmus Monkey", pose = "
         height={size}
         className="object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300"
         priority
+        onError={() => setError(true)}
       />
     </div>
   );
