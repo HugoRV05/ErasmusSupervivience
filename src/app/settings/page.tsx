@@ -219,7 +219,7 @@ export default function SettingsPage() {
           {/* Data Management */}
           <section>
             <div className="flex items-center gap-4 mb-4">
-              <Mascot size={80} pose="thinking" />
+              <Mascot size={80} pose="mechanic" />
               <div>
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                   Data Management

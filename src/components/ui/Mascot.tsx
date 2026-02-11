@@ -7,7 +7,7 @@ interface MascotProps {
   className?: string;
   size?: number;
   alt?: string;
-  pose?: "default" | "thinking" | "happy" | "sad"; // Placeholder for future poses
+  pose?: "default" | "thinking" | "happy" | "sad" | "scholar" | "explorer" | "mechanic" | string;
 }
 
 export function Mascot({ className, size = 120, alt = "Erasmus Monkey", pose = "default" }: MascotProps) {

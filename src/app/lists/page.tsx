@@ -273,7 +273,7 @@ export default function ListsPage() {
 
         {shoppingLists.length === 0 && (
           <div className="text-center py-12 text-muted-foreground flex flex-col items-center">
-            <Mascot size={180} pose="default" />
+            <Mascot size={180} pose="explorer" />
             <p className="text-sm mt-4 font-medium">No lists yet</p>
             <p className="text-xs mt-1 opacity-70">Tap &quot;+ List&quot; to create one</p>
           </div>

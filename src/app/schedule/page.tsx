@@ -296,7 +296,7 @@ export default function SchedulePage() {
 
               {reminders.length === 0 && (
                 <div className="text-center py-10 text-muted-foreground flex flex-col items-center">
-                  <Mascot size={150} pose="default" />
+                  <Mascot size={150} pose="scholar" />
                   <p className="text-sm mt-4 font-medium">No reminders yet</p>
                 </div>
               )}
