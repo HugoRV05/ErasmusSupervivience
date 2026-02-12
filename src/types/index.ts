@@ -2,7 +2,8 @@
 export interface ExpenseCategory {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
+  emoji?: string;
   color: string; // tailwind-compatible color or hex
 }
 
@@ -18,7 +19,7 @@ export interface Expense {
 export interface PantryItem {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
   currentQty: number;
   maxQty: number;
   unit: string; // "units", "pack", "liters", etc.
@@ -35,7 +36,7 @@ export interface ShoppingItem {
 export interface ShoppingList {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
   items: ShoppingItem[];
 }
 
@@ -64,7 +65,7 @@ export interface Reminder {
   title: string;
   date: string; // ISO string
   category: string;
-  emoji: string;
+  icon: string;
   done: boolean;
 }
 

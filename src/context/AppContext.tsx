@@ -179,14 +179,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
   const toggleShoppingItem = useCallback(
     (listId: string, itemId: string) =>
-      setShoppingLists((prev) =>
-        prev.map((l) =>
+      setShoppingLists((prev) => {
+        const newList = prev.map((l) =>
           l.id === listId
             ? { ...l, items: l.items.map((i) => (i.id === itemId ? { ...i, checked: !i.checked } : i)) }
             : l
-        )
-      ),
-    [setShoppingLists]
+        );
+
+        // SYNC LOGIC: If an item was just checked, try to refill it in the pantry
+        const list = newList.find(l => l.id === listId);
+        const item = list?.items.find(i => i.id === itemId);
+        
+        if (item?.checked) {
+          setPantryItems(prevPantry => {
+            const index = prevPantry.findIndex(p => p.name.toLowerCase() === item.name.toLowerCase());
+            if (index !== -1) {
+              const newPantry = [...prevPantry];
+              newPantry[index] = { ...newPantry[index], currentQty: newPantry[index].maxQty };
+              return newPantry;
+            }
+            return prevPantry;
+          });
+        }
+
+        return newList;
+      }),
+    [setShoppingLists, setPantryItems]
   );
   const deleteShoppingItem = useCallback(
     (listId: string, itemId: string) =>

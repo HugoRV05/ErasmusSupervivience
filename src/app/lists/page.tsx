@@ -16,6 +16,7 @@ import {
 import { Plus, Check, Trash2, Edit2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Mascot } from "@/components/ui/Mascot";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 export default function ListsPage() {
   const {
@@ -28,10 +29,10 @@ export default function ListsPage() {
   const [newItemQty, setNewItemQty] = useState("");
   const [newListOpen, setNewListOpen] = useState(false);
   const [newListName, setNewListName] = useState("");
-  const [newListEmoji, setNewListEmoji] = useState("📝");
+  const [newListIcon, setNewListIcon] = useState("ShoppingCart");
   const [editingList, setEditingList] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
-  const [editEmoji, setEditEmoji] = useState("");
+  const [editIcon, setEditIcon] = useState("");
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -54,21 +55,21 @@ export default function ListsPage() {
 
   const handleAddList = () => {
     if (!newListName.trim()) return;
-    addShoppingList({ name: newListName.trim(), emoji: newListEmoji || "📝" });
+    addShoppingList({ name: newListName.trim(), icon: newListIcon || "ShoppingCart" });
     setNewListName("");
-    setNewListEmoji("📝");
+    setNewListIcon("ShoppingCart");
     setNewListOpen(false);
   };
 
-  const startEditList = (id: string, name: string, emoji: string) => {
+  const startEditList = (id: string, name: string, icon: string) => {
     setEditingList(id);
     setEditName(name);
-    setEditEmoji(emoji);
+    setEditIcon(icon);
   };
 
   const saveEditList = () => {
     if (editingList && editName.trim()) {
-      updateShoppingList(editingList, editName.trim(), editEmoji);
+      updateShoppingList(editingList, editName.trim(), editIcon);
       setEditingList(null);
     }
   };
@@ -96,10 +97,9 @@ export default function ListsPage() {
               <div className="space-y-4 mt-4">
                 <div className="flex gap-3">
                   <Input
-                    value={newListEmoji}
-                    onChange={(e) => setNewListEmoji(e.target.value)}
-                    className="w-16 text-center text-xl rounded-xl"
-                    maxLength={4}
+                    value={newListIcon}
+                    onChange={(e) => setNewListIcon(e.target.value)}
+                    className="w-32 rounded-xl"
                   />
                   <Input
                     placeholder="List name"
@@ -125,11 +125,11 @@ export default function ListsPage() {
               className={cn(
                 "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border shrink-0",
                 activeListId === list.id
-                  ? "border-primary bg-primary/10 text-foreground"
-                  : "border-border bg-card text-muted-foreground"
+                  ? "border-primary bg-primary/10 text-foreground shadow-sm"
+                  : "border-border/50 bg-card/60 backdrop-blur-md text-muted-foreground hover:text-foreground"
               )}
             >
-              <span>{list.emoji}</span>
+              <DynamicIcon name={list.icon || "ShoppingCart"} size={16} />
               <span>{list.name}</span>
               {list.items.length > 0 && (
                 <span className="ml-1 text-xs bg-secondary px-1.5 py-0.5 rounded-full">
@@ -147,10 +147,9 @@ export default function ListsPage() {
               {editingList === activeList.id ? (
                 <div className="flex gap-2 items-center flex-1">
                   <Input
-                    value={editEmoji}
-                    onChange={(e) => setEditEmoji(e.target.value)}
-                    className="w-12 text-center rounded-lg"
-                    maxLength={4}
+                    value={editIcon}
+                    onChange={(e) => setEditIcon(e.target.value)}
+                    className="w-32 rounded-lg"
                   />
                   <Input
                     value={editName}
@@ -167,7 +166,7 @@ export default function ListsPage() {
               ) : (
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => startEditList(activeList.id, activeList.name, activeList.emoji)}
+                    onClick={() => startEditList(activeList.id, activeList.name, activeList.icon)}
                     className="p-1 text-muted-foreground hover:text-foreground"
                   >
                     <Edit2 className="h-4 w-4" />
@@ -226,8 +225,8 @@ export default function ListsPage() {
                     className={cn(
                       "flex items-center gap-3 rounded-xl border p-3 transition-all",
                       item.checked
-                        ? "border-border/30 opacity-50"
-                        : "border-border/50 bg-card"
+                        ? "border-border/10 opacity-50"
+                        : "border-border/50 bg-card/60 backdrop-blur-md shadow-sm"
                     )}
                   >
                     <button
@@ -263,9 +262,9 @@ export default function ListsPage() {
             </div>
 
             {activeList.items.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
-                <p className="text-3xl mb-2">✨</p>
-                <p className="text-sm">This list is empty</p>
+              <div className="text-center py-16 text-muted-foreground flex flex-col items-center">
+                <Mascot size={150} pose="success" />
+                <p className="text-sm mt-4 font-medium italic">Everything is under control</p>
               </div>
             )}
           </>
@@ -273,7 +272,7 @@ export default function ListsPage() {
 
         {shoppingLists.length === 0 && (
           <div className="text-center py-12 text-muted-foreground flex flex-col items-center">
-            <Mascot size={180} pose="explorer" />
+            <Mascot size={180} pose="lists" />
             <p className="text-sm mt-4 font-medium">No lists yet</p>
             <p className="text-xs mt-1 opacity-70">Tap &quot;+ List&quot; to create one</p>
           </div>

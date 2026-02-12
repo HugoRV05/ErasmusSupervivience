@@ -21,10 +21,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Plus, Minus, RotateCcw, ShoppingCart, Trash2, Edit2 } from "lucide-react";
-import { cn, getStockLevel } from "@/lib/utils";
+import { cn, getStockLevel, getEmojiForPantryItem } from "@/lib/utils";
 import { PantryItem } from "@/types";
 import { useEffect } from "react";
 import { Mascot } from "@/components/ui/Mascot";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { hapticFeedback } from "@/lib/utils";
 
 export default function PantryPage() {
   const {
@@ -35,9 +37,10 @@ export default function PantryPage() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<PantryItem | null>(null);
   const [newName, setNewName] = useState("");
-  const [newEmoji, setNewEmoji] = useState("📦");
+  const [newIcon, setNewIcon] = useState("Package");
   const [newMaxQty, setNewMaxQty] = useState("1");
   const [newUnit, setNewUnit] = useState("units");
+  const [catSearch, setCatSearch] = useState(""); // For icon searching
 
   useEffect(() => setMounted(true), []);
 
@@ -45,13 +48,14 @@ export default function PantryPage() {
     if (!newName.trim()) return;
     addPantryItem({
       name: newName.trim(),
-      emoji: newEmoji || "📦",
+      icon: newIcon || "Package",
       currentQty: parseInt(newMaxQty) || 1,
       maxQty: parseInt(newMaxQty) || 1,
       unit: newUnit || "units",
     });
+    hapticFeedback('success');
     setNewName("");
-    setNewEmoji("📦");
+    setNewIcon("Package");
     setNewMaxQty("1");
     setNewUnit("units");
     setAddDialogOpen(false);
@@ -62,10 +66,11 @@ export default function PantryPage() {
     updatePantryItem({
       ...editItem,
       name: newName.trim(),
-      emoji: newEmoji || "📦",
+      icon: newIcon || "Package",
       maxQty: parseInt(newMaxQty) || 1,
       unit: newUnit || "units",
     });
+    hapticFeedback('light');
     setEditItem(null);
   };
 
@@ -79,9 +84,25 @@ export default function PantryPage() {
   const openEdit = (item: PantryItem) => {
     setEditItem(item);
     setNewName(item.name);
-    setNewEmoji(item.emoji);
+    setNewIcon(item.icon);
     setNewMaxQty(String(item.maxQty));
     setNewUnit(item.unit);
+    setAddDialogOpen(true); // Reuse the same dialog state logic or a separate one, let's use separate for clarity if needed, but UI should be same.
+  };
+
+  // Simplified dialog closer
+  const closeDialog = () => {
+    setAddDialogOpen(false);
+    setEditItem(null);
+    setNewName("");
+    setNewIcon("Package");
+    setNewMaxQty("1");
+    setNewUnit("units");
+  };
+
+  const handleAction = () => {
+    if (editItem) handleEditItem();
+    else handleAddItem();
   };
 
   if (!mounted) return null;
@@ -92,53 +113,67 @@ export default function PantryPage() {
         title="Pantry"
         subtitle={`${pantryItems.length} items`}
         action={
-          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+          <Dialog open={addDialogOpen || !!editItem} onOpenChange={(open) => !open && closeDialog()}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="outline" className="rounded-xl gap-1.5">
-                <Plus className="h-4 w-4" /> Add
+              <Button size="sm" variant="outline" className="rounded-xl gap-1.5 border-primary/20 hover:bg-primary/5">
+                <Plus className="h-4 w-4 text-primary" /> Add
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl max-w-sm">
+            <DialogContent className="rounded-3xl max-w-sm p-8">
               <DialogHeader>
-                <DialogTitle>New Pantry Item</DialogTitle>
+                <DialogTitle className="text-2xl font-bold tracking-tight">
+                  {editItem ? "Edit Item" : "New Pantry Item"}
+                </DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 mt-4">
-                <div className="flex gap-3">
-                  <Input
-                    value={newEmoji}
-                    onChange={(e) => setNewEmoji(e.target.value)}
-                    className="w-16 text-center text-xl rounded-xl"
-                    maxLength={4}
-                  />
-                  <Input
-                    placeholder="Item name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="rounded-xl flex-1"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <label className="text-xs text-muted-foreground mb-1 block">Max Qty</label>
+              <div className="space-y-6 mt-6">
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="w-16 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0 border border-border/50">
+                      <DynamicIcon name={newIcon || "Package"} size={22} className="text-primary/60" />
+                    </div>
                     <Input
-                      type="number"
-                      value={newMaxQty}
-                      onChange={(e) => setNewMaxQty(e.target.value)}
-                      className="rounded-xl"
+                      placeholder="Item name (e.g. Eggs)"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      className="rounded-xl h-12 flex-1 font-medium"
                     />
                   </div>
-                  <div className="flex-1">
-                    <label className="text-xs text-muted-foreground mb-1 block">Unit</label>
-                    <Input
-                      placeholder="units"
-                      value={newUnit}
-                      onChange={(e) => setNewUnit(e.target.value)}
-                      className="rounded-xl"
-                    />
+                  
+                  <Input
+                    placeholder="Icon name (Package, Apple, etc.)"
+                    value={newIcon}
+                    onChange={(e) => setNewIcon(e.target.value)}
+                    className="rounded-xl h-10 text-xs text-muted-foreground"
+                  />
+                  
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="text-[10px] uppercase font-bold text-muted-foreground/60 mb-1.5 ml-1 block">Max Quantity</label>
+                      <Input
+                        type="number"
+                        value={newMaxQty}
+                        onChange={(e) => setNewMaxQty(e.target.value)}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-[10px] uppercase font-bold text-muted-foreground/60 mb-1.5 ml-1 block">Unit</label>
+                      <Input
+                        placeholder="L, Kg, Units..."
+                        value={newUnit}
+                        onChange={(e) => setNewUnit(e.target.value)}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
                   </div>
                 </div>
-                <Button onClick={handleAddItem} className="w-full rounded-xl" disabled={!newName.trim()}>
-                  Add Item
+
+                <Button 
+                  onClick={handleAction} 
+                  className="w-full h-12 rounded-2xl font-bold shadow-lg shadow-primary/20" 
+                  disabled={!newName.trim()}
+                >
+                  {editItem ? "Save Changes" : "Add to Pantry"}
                 </Button>
               </div>
             </DialogContent>
@@ -154,14 +189,17 @@ export default function PantryPage() {
               <div
                 key={item.id}
                 className={cn(
-                  "rounded-2xl border p-4 transition-colors",
-                  stock === "empty" && "border-destructive/50 bg-destructive/5",
-                  stock === "low" && "border-yellow-500/50 bg-yellow-500/5",
-                  stock === "ok" && "border-border/50 bg-card"
+                  "rounded-2xl border p-4 transition-all glass active:scale-[0.98] shadow-sm",
+                  stock === "empty" && "border-destructive/30 bg-destructive/5",
+                  stock === "low" && "border-yellow-500/30 bg-yellow-500/5",
+                  stock === "ok" && "border-border/50 bg-card/60 backdrop-blur-md"
                 )}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <span className="text-2xl">{item.emoji}</span>
+                <div className="flex items-start justify-between mb-3">
+                  <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center relative">
+                    <DynamicIcon name={item.icon || "Package"} className="text-foreground/40" size={20} />
+                    <span className="absolute text-xl">{getEmojiForPantryItem(item.name)}</span>
+                  </div>
                   <div className="flex gap-1">
                     <button
                       onClick={() => openEdit(item)}
@@ -213,14 +251,25 @@ export default function PantryPage() {
                   </button>
                 </div>
 
-                {stock === "empty" && (
-                  <button
-                    onClick={() => addToPrimaryList(item.name)}
-                    className="mt-2 w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition"
-                  >
-                    <ShoppingCart className="h-3 w-3" /> Add to list
-                  </button>
-                )}
+                <div className="h-10 mt-auto pt-3">
+                  {stock !== "ok" && (
+                    <button
+                      onClick={() => {
+                        addToPrimaryList(item.name);
+                        hapticFeedback('medium');
+                      }}
+                      className={cn(
+                        "w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[10px] font-bold transition-all shadow-sm",
+                        stock === "empty" 
+                          ? "bg-destructive text-destructive-foreground" 
+                          : "bg-yellow-500 text-white"
+                      )}
+                    >
+                      <ShoppingCart className="h-3 w-3" /> 
+                      {stock === "empty" ? "RESTOCK NOW" : "BUY SOON"}
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -228,57 +277,13 @@ export default function PantryPage() {
 
         {pantryItems.length === 0 && (
           <div className="text-center py-12 text-muted-foreground flex flex-col items-center">
-            <Mascot size={180} pose="sad" />
+            <Mascot size={180} pose="pantry-empty" />
             <p className="text-sm mt-4 font-medium">Your pantry is empty</p>
             <p className="text-xs mt-1 opacity-70">Tap &quot;Add&quot; to start tracking items</p>
           </div>
         )}
 
-        {/* Edit Sheet */}
-        <Sheet open={!!editItem} onOpenChange={() => setEditItem(null)}>
-          <SheetContent side="bottom" className="rounded-t-3xl pb-[env(safe-area-inset-bottom)] max-w-lg mx-auto">
-            <SheetHeader>
-              <SheetTitle>Edit Item</SheetTitle>
-            </SheetHeader>
-            <div className="space-y-4 mt-4">
-              <div className="flex gap-3">
-                <Input
-                  value={newEmoji}
-                  onChange={(e) => setNewEmoji(e.target.value)}
-                  className="w-16 text-center text-xl rounded-xl"
-                  maxLength={4}
-                />
-                <Input
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className="rounded-xl flex-1"
-                />
-              </div>
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label className="text-xs text-muted-foreground mb-1 block">Max Qty</label>
-                  <Input
-                    type="number"
-                    value={newMaxQty}
-                    onChange={(e) => setNewMaxQty(e.target.value)}
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="text-xs text-muted-foreground mb-1 block">Unit</label>
-                  <Input
-                    value={newUnit}
-                    onChange={(e) => setNewUnit(e.target.value)}
-                    className="rounded-xl"
-                  />
-                </div>
-              </div>
-              <Button onClick={handleEditItem} className="w-full rounded-xl">
-                Save Changes
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+
       </PageShell>
     </AnimatedPage>
   );

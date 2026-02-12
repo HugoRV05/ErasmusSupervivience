@@ -24,6 +24,7 @@ import { cn, getTodayDayOfWeek } from "@/lib/utils";
 import { DayOfWeek, ScheduleEvent } from "@/types";
 import { EVENT_COLORS, REMINDER_CATEGORIES } from "@/lib/constants";
 import { Mascot } from "@/components/ui/Mascot";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 const DAYS: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -50,7 +51,7 @@ export default function SchedulePage() {
   const [reminderTitle, setReminderTitle] = useState("");
   const [reminderDate, setReminderDate] = useState("");
   const [reminderCategory, setReminderCategory] = useState(REMINDER_CATEGORIES[0].label);
-  const [reminderEmoji, setReminderEmoji] = useState(REMINDER_CATEGORIES[0].emoji);
+  const [reminderIcon, setReminderIcon] = useState(REMINDER_CATEGORIES[0].icon);
 
   useEffect(() => setMounted(true), []);
 
@@ -74,7 +75,7 @@ export default function SchedulePage() {
       title: reminderTitle.trim(),
       date: reminderDate || new Date().toISOString().split("T")[0],
       category: reminderCategory,
-      emoji: reminderEmoji,
+      icon: reminderIcon,
     });
     setReminderTitle(""); setReminderDate("");
     setAddReminderOpen(false);
@@ -171,7 +172,7 @@ export default function SchedulePage() {
 
               {dayEvents.length === 0 && (
                 <div className="text-center py-10 text-muted-foreground flex flex-col items-center">
-                  <Mascot size={150} pose="happy" />
+                  <Mascot size={150} pose="schedule" />
                   <p className="text-sm mt-4 font-medium">No classes on {selectedDay}</p>
                 </div>
               )}
@@ -278,7 +279,7 @@ export default function SchedulePage() {
                     >
                       {rem.done && <Check className="h-3.5 w-3.5" />}
                     </button>
-                    <span className="text-lg">{rem.emoji}</span>
+                    <DynamicIcon name={rem.icon || "Pin"} size={20} className="text-primary" />
                     <div className="flex-1 min-w-0">
                       <p className={cn("text-sm font-medium", rem.done && "line-through text-muted-foreground")}>
                         {rem.title}
@@ -296,7 +297,7 @@ export default function SchedulePage() {
 
               {reminders.length === 0 && (
                 <div className="text-center py-10 text-muted-foreground flex flex-col items-center">
-                  <Mascot size={150} pose="scholar" />
+                  <Mascot size={150} pose="schedule" />
                   <p className="text-sm mt-4 font-medium">No reminders yet</p>
                 </div>
               )}
@@ -334,7 +335,7 @@ export default function SchedulePage() {
                       {REMINDER_CATEGORIES.map((cat) => (
                         <button
                           key={cat.label}
-                          onClick={() => { setReminderCategory(cat.label); setReminderEmoji(cat.emoji); }}
+                          onClick={() => { setReminderCategory(cat.label); setReminderIcon(cat.icon); }}
                           className={cn(
                             "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition",
                             reminderCategory === cat.label
@@ -342,7 +343,7 @@ export default function SchedulePage() {
                               : "border-border"
                           )}
                         >
-                          <span>{cat.emoji}</span> {cat.label}
+                          <DynamicIcon name={cat.icon} size={14} /> {cat.label}
                         </button>
                       ))}
                     </div>

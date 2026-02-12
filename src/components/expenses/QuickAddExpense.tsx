@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 export function QuickAddExpense() {
   const { expenseCategories, addExpense } = useAppContext();
@@ -21,7 +22,7 @@ export function QuickAddExpense() {
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState(expenseCategories[0]?.id || "");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const num = parseFloat(amount);
     if (isNaN(num) || num <= 0 || !categoryId) return;
 
@@ -31,6 +32,13 @@ export function QuickAddExpense() {
       categoryId,
       date: new Date().toISOString(),
     });
+
+    try {
+      const { hapticFeedback } = await import("@/lib/utils");
+      hapticFeedback('success');
+    } catch (e) {
+      // Ignore vibration errors
+    }
 
     setAmount("");
     setDescription("");
@@ -94,10 +102,10 @@ export function QuickAddExpense() {
                     "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all border",
                     categoryId === cat.id
                       ? "border-primary bg-primary/10 text-foreground"
-                      : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                      : "border-border bg-card/60 backdrop-blur-md text-muted-foreground hover:border-primary/50"
                   )}
                 >
-                  <span>{cat.emoji}</span>
+                  <DynamicIcon name={cat.icon || "Tag"} size={16} />
                   <span>{cat.name}</span>
                 </button>
               ))}

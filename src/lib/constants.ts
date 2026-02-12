@@ -2,28 +2,28 @@ import { ExpenseCategory, PantryItem, ShoppingList } from "@/types";
 
 // ── Default Expense Categories (user-editable seed data) ─────
 export const DEFAULT_EXPENSE_CATEGORIES: ExpenseCategory[] = [
-  { id: "cat-fixed",    name: "Fixed",         emoji: "🏠", color: "#6366f1" },
-  { id: "cat-survival", name: "Survival",      emoji: "🛒", color: "#22c55e" },
-  { id: "cat-social",   name: "Erasmus/Social", emoji: "🎉", color: "#f59e0b" },
+  { id: "cat-fixed",    name: "Fixed",         icon: "Home", color: "#6366f1" },
+  { id: "cat-survival", name: "Survival",      icon: "ShoppingCart", color: "#22c55e" },
+  { id: "cat-social",   name: "Erasmus/Social", icon: "PartyPopper", color: "#f59e0b" },
 ];
 
 // ── Default Pantry Items ─────────────────────────────────────
 export const DEFAULT_PANTRY_ITEMS: PantryItem[] = [
-  { id: "pantry-1",  name: "Eggs",        emoji: "🥚", currentQty: 6,  maxQty: 12, unit: "units" },
-  { id: "pantry-2",  name: "Pasta",       emoji: "🍝", currentQty: 1,  maxQty: 1,  unit: "pack" },
-  { id: "pantry-3",  name: "Milk",        emoji: "🥛", currentQty: 1,  maxQty: 1,  unit: "liter" },
-  { id: "pantry-4",  name: "Rice",        emoji: "🍚", currentQty: 1,  maxQty: 1,  unit: "pack" },
-  { id: "pantry-5",  name: "Bread",       emoji: "🍞", currentQty: 1,  maxQty: 1,  unit: "loaf" },
-  { id: "pantry-6",  name: "Chicken",     emoji: "🍗", currentQty: 0,  maxQty: 1,  unit: "pack" },
-  { id: "pantry-7",  name: "Tomatoes",    emoji: "🍅", currentQty: 3,  maxQty: 6,  unit: "units" },
-  { id: "pantry-8",  name: "Onions",      emoji: "🧅", currentQty: 2,  maxQty: 4,  unit: "units" },
+  { id: "pantry-1",  name: "Eggs",        icon: "Circle", currentQty: 6,  maxQty: 12, unit: "units" },
+  { id: "pantry-2",  name: "Pasta",       icon: "Utensils", currentQty: 1,  maxQty: 1,  unit: "pack" },
+  { id: "pantry-3",  name: "Milk",        icon: "GlassWater", currentQty: 1,  maxQty: 1,  unit: "liter" },
+  { id: "pantry-4",  name: "Rice",        icon: "Wheat", currentQty: 1,  maxQty: 1,  unit: "pack" },
+  { id: "pantry-5",  name: "Bread",       icon: "Loaf", currentQty: 1,  maxQty: 1,  unit: "loaf" },
+  { id: "pantry-6",  name: "Chicken",     icon: "Beef", currentQty: 0,  maxQty: 1,  unit: "pack" },
+  { id: "pantry-7",  name: "Tomatoes",    icon: "Cherry", currentQty: 3,  maxQty: 6,  unit: "units" },
+  { id: "pantry-8",  name: "Onions",      icon: "Apple", currentQty: 2,  maxQty: 4,  unit: "units" },
 ];
 
 // ── Default Shopping Lists ───────────────────────────────────
 export const DEFAULT_SHOPPING_LISTS: ShoppingList[] = [
-  { id: "list-super",    name: "Supermarket",       emoji: "🛒", items: [] },
-  { id: "list-pharmacy", name: "Pharmacy/Cleaning",  emoji: "🧴", items: [] },
-  { id: "list-special",  name: "Special/Tech",       emoji: "📦", items: [] },
+  { id: "list-super",    name: "Supermarket",       icon: "ShoppingCart", items: [] },
+  { id: "list-pharmacy", name: "Pharmacy/Cleaning",  icon: "Ambulance", items: [] },
+  { id: "list-special",  name: "Special/Tech",       icon: "Package", items: [] },
 ];
 
 // ── Schedule Colors ──────────────────────────────────────────
@@ -34,10 +34,10 @@ export const EVENT_COLORS = [
 
 // ── Reminder Categories ──────────────────────────────────────
 export const REMINDER_CATEGORIES = [
-  { label: "ID Card",    emoji: "🪪" },
-  { label: "Bank",       emoji: "🏦" },
-  { label: "Landlord",   emoji: "🏡" },
-  { label: "University", emoji: "🎓" },
-  { label: "Health",     emoji: "🏥" },
-  { label: "Other",      emoji: "📌" },
+  { label: "ID Card",    icon: "FileText" },
+  { label: "Bank",       icon: "Landmark" },
+  { label: "Landlord",   icon: "Home" },
+  { label: "University", icon: "GraduationCap" },
+  { label: "Health",     icon: "HeartPulse" },
+  { label: "Other",      icon: "Pin" },
 ];
